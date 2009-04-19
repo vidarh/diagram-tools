@@ -1,0 +1,6 @@
+
+A number of small tools for generating and manipulating diagrams, mostly
+relying on Graphviz for output.
+
+Vidar Hokstad <vidar@hokstad.com>
+
