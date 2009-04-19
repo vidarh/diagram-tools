@@ -5,4 +5,12 @@ relying on Graphviz for output.
 Vidar Hokstad <vidar@hokstad.com>
 
  * notugly.xsl: An XSL transform to pretty up the SVG output from Graphviz
+     By Vidar Hokstad and Ryan Shea
 
+ * arytodot.rb: A script to visualize Ruby arrays using Graphviz
+     See: http://www.hokstad.com/creating-graphviz-graphs-from-ruby-arrays.html
+     By Vidar Hokstad
+
+ * traceviz.rb: A script to visualize traceviz ouput with Graphviz
+     See: http://www.hokstad.com/traceviz-visualizing-traceroute-output-with-graphivz.html
+     By Vidar Hokstad
