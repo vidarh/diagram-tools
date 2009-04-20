@@ -58,7 +58,7 @@
 </xsl:template> 
 
 
-<!-- This is longer, but it can be expanded to cover more 
+<!-- This is longer than it has to be, but it can be expanded to cover more
      tags simply by changing the "match" attribute -->
 <xsl:template match="svg:polygon|svg:ellipse">
         <xsl:element name="{name()}">
@@ -68,13 +68,21 @@
         </xsl:element>
         <xsl:element name="{name()}">
           <xsl:apply-templates select="@*" />
-          <xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:black;</xsl:attribute>
+          <xsl:choose>
+             <xsl:when test="@fill != ''"><xsl:attribute name="style">fill:url(#<xsl:value-of select="@fill"/>);stroke:black;</xsl:attribute></xsl:when>
+             <xsl:otherwise><xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:black;</xsl:attribute></xsl:otherwise>
+          </xsl:choose>
         </xsl:element>
 </xsl:template>
 
 <xsl:template match="svg:path">
-        <path style="{@style}" d="{@d}"/>
-        <path style="fill: none; stroke: black; stroke-opacity:0.3" d="{@d}" transform="translate(3,3)"/>
+        <path>
+           <xsl:apply-templates select="@*|text()" />
+        </path>
+        <xsl:choose>
+           <xsl:when test="@stroke != ''"><path style="stroke:{@stroke}; stroke-opacity:0.3; fill:none;" d="{@d}" transform="translate(3,3)" /></xsl:when>
+           <xsl:otherwise><path style="fill: none; stroke: black; stroke-opacity:0.3" d="{@d}" transform="translate(3,3)"/></xsl:otherwise>
+        </xsl:choose>
 </xsl:template>
  
 </xsl:stylesheet>
