@@ -60,7 +60,7 @@
 
 <!-- This is longer than it has to be, but it can be expanded to cover more
      tags simply by changing the "match" attribute -->
-<xsl:template match="svg:polygon|svg:ellipse">
+<xsl:template match="svg:polygon|svg:ellipse|svg:polyline">
         <xsl:element name="{name()}">
           <xsl:apply-templates select="@*"/>
           <xsl:attribute name="style">fill: black; stroke: none; fill-opacity:0.3</xsl:attribute> 
@@ -79,10 +79,14 @@
         <path>
            <xsl:apply-templates select="@*|text()" />
         </path>
-        <xsl:choose>
-           <xsl:when test="@stroke != ''"><path style="stroke:{@stroke}; stroke-opacity:0.3; fill:none;" d="{@d}" transform="translate(3,3)" /></xsl:when>
-           <xsl:otherwise><path style="fill: none; stroke: black; stroke-opacity:0.3" d="{@d}" transform="translate(3,3)"/></xsl:otherwise>
-        </xsl:choose>
+        <path>
+          <xsl:apply-templates select="@*" />
+          <xsl:attribute name="transform">translate(3,3)</xsl:attribute>
+          <xsl:choose>
+            <xsl:when test="@stroke != ''"><xsl:attribute name="style">stroke:{@stroke}; stroke-opacity:0.3; fill:none;</xsl:attribute></xsl:when>
+            <xsl:otherwise><xsl:attribute name="style">fill: none; stroke: black; stroke-opacity:0.3</xsl:attribute></xsl:otherwise>
+          </xsl:choose>
+        </path>
 </xsl:template>
  
 </xsl:stylesheet>
