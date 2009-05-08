@@ -1,0 +1,36 @@
+
+digraph test {
+  size = "7,7";
+ 
+  node [fontsize=20];
+
+  foo [ shape = box ];
+  bar [ shape = box, style="filled", fillcolor="lightblue" ];
+
+  baz [ shape = box, style="filled,rounded", fillcolor="white" ];
+  x   [ shape = box, style="filled,rounded" ];
+  y   [ shape = polygon ];
+  z   [ shape = polygon, style="filled" ];
+  a   [ shape = ellipse ];
+  b   [ shape = ellipse, style="filled" ];
+  c   [ shape = triangle ];
+  d   [ shape = triangle, style="filled" ];
+
+  e   [ shape = house ];
+  f   [ shape = house, style="filled" ];
+
+  g   [ shape = doublecircle ];
+  h   [ shape = doublecircle, style="filled" ];
+
+  k   [ shape = Mcircle ];
+  l   [ shape = Mcircle, style="filled" ];
+
+  m   [ shape = component ];
+  n   [ shape = component, style="filled" ];
+
+  foo -> bar;
+  a -> b -> c;
+  x -> y -> z;
+
+  k -> l -> m -> n;
+}

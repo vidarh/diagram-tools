@@ -18,6 +18,10 @@
     <xsl:apply-templates select="@*" />
  
     <defs>
+      <linearGradient id="white" x1="0%" y1="0%" x2="0%" y2="0%">
+         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
+      </linearGradient>
+
       <linearGradient id="lightgrey" x1="0%" y1="0%" x2="100%" y2="100%">
          <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
          <stop offset="100%" style="stop-color:rgb(128,128,128);stop-opacity:1"/>
@@ -57,13 +61,25 @@
    </text>
 </xsl:template> 
 
-
-<!-- This is longer than it has to be, but it can be expanded to cover more
-     tags simply by changing the "match" attribute -->
-<xsl:template match="svg:polygon|svg:ellipse|svg:polyline">
+<xsl:template match="svg:polygon|svg:ellipse">
         <xsl:element name="{name()}">
           <xsl:apply-templates select="@*"/>
           <xsl:attribute name="style">fill: black; stroke: none; fill-opacity:0.3</xsl:attribute> 
+          <xsl:attribute name="transform">translate(3,3)</xsl:attribute>
+        </xsl:element>
+        <xsl:element name="{name()}">
+          <xsl:apply-templates select="@*" />
+          <xsl:choose>
+             <xsl:when test="@fill != ''"><xsl:attribute name="style">fill:url(#<xsl:value-of select="@fill"/>);stroke:black;</xsl:attribute></xsl:when>
+             <xsl:otherwise><xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:black;</xsl:attribute></xsl:otherwise>
+          </xsl:choose>
+        </xsl:element>
+</xsl:template>
+
+<xsl:template match="svg:polyline">
+        <xsl:element name="{name()}">
+          <xsl:apply-templates select="@*"/>
+          <xsl:attribute name="style">fill: none; stroke: black; opacity:0.3</xsl:attribute> 
           <xsl:attribute name="transform">translate(3,3)</xsl:attribute>
         </xsl:element>
         <xsl:element name="{name()}">
