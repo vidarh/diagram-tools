@@ -42,7 +42,7 @@
   </svg>
 </xsl:template>
 
-<!-- Match the top most "g" as Graphviz does stupid stuff to it. -->
+<!-- Match the top most "g" -->
 <xsl:template match="/svg:svg/svg:g"> 
   <g>
     <xsl:apply-templates select="@*"/>
@@ -61,47 +61,65 @@
    </text>
 </xsl:template> 
 
-<xsl:template match="svg:polygon|svg:ellipse">
+
+<xsl:template match="svg:g">
+  <xsl:copy>
+    <xsl:apply-templates select="@*" />
+  </xsl:copy>
+
+  <xsl:for-each select="svg:polygon|svg:ellipse">
+    <xsl:call-template name="poly-shadow" />
+  </xsl:for-each>
+  
+  <xsl:for-each select="svg:path">
+    <xsl:call-template name="path-shadow" />
+  </xsl:for-each>
+  
+  <xsl:for-each select="svg:polygon|svg:ellipse|svg:polyline">
+    <xsl:call-template name="poly-main" />
+  </xsl:for-each>
+
+  <xsl:for-each select="svg:path">
+    <xsl:call-template name="path-main" />
+  </xsl:for-each>
+  
+  <xsl:apply-templates select="svg:text" />
+
+</xsl:template>
+
+<xsl:template name="poly-shadow">
         <xsl:element name="{name()}">
           <xsl:apply-templates select="@*"/>
           <xsl:attribute name="style">fill: black; stroke: none; fill-opacity:0.3</xsl:attribute> 
           <xsl:attribute name="transform">translate(3,3)</xsl:attribute>
         </xsl:element>
-        <xsl:element name="{name()}">
-          <xsl:apply-templates select="@*" />
-          <xsl:choose>
-             <xsl:when test="@fill != ''"><xsl:attribute name="style">fill:url(#<xsl:value-of select="@fill"/>);stroke:black;</xsl:attribute></xsl:when>
-             <xsl:otherwise><xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:black;</xsl:attribute></xsl:otherwise>
-          </xsl:choose>
-        </xsl:element>
 </xsl:template>
 
-<xsl:template match="svg:polyline">
+<xsl:template name="path-shadow">
         <xsl:element name="{name()}">
           <xsl:apply-templates select="@*"/>
-          <xsl:attribute name="style">fill: none; stroke: black; opacity:0.3</xsl:attribute> 
+	  <!-- For some reason this comes out twice, so the opacity is set to 0.15 instead of 0.3 -->
+          <xsl:attribute name="style">fill: black; stroke: none; fill-opacity:0.15</xsl:attribute> 
           <xsl:attribute name="transform">translate(3,3)</xsl:attribute>
-        </xsl:element>
-        <xsl:element name="{name()}">
-          <xsl:apply-templates select="@*" />
-          <xsl:choose>
-             <xsl:when test="@fill != ''"><xsl:attribute name="style">fill:url(#<xsl:value-of select="@fill"/>);stroke:black;</xsl:attribute></xsl:when>
-             <xsl:otherwise><xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:black;</xsl:attribute></xsl:otherwise>
-          </xsl:choose>
         </xsl:element>
 </xsl:template>
 
-<xsl:template match="svg:path">
-        <path>
-           <xsl:apply-templates select="@*|text()" />
-        </path>
+<xsl:template name="poly-main">
+  <xsl:element name="{name()}">
+    <xsl:apply-templates select="@*" />
+    <xsl:choose>
+      <xsl:when test="@fill != ''">
+<xsl:attribute name="style">fill:url(#<xsl:value-of select="@fill"/>);stroke:black;</xsl:attribute></xsl:when>
+      <xsl:otherwise><xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:<xsl:value-of select="normalize-space(substring-after(substring-after(@style,';'),'stroke:'))"/>;</xsl:attribute></xsl:otherwise>
+    </xsl:choose>
+  </xsl:element>
+</xsl:template>
+
+<xsl:template name="path-main">
         <path>
           <xsl:apply-templates select="@*" />
-          <xsl:attribute name="transform">translate(3,3)</xsl:attribute>
-          <xsl:choose>
-            <xsl:when test="@stroke != ''"><xsl:attribute name="style">stroke:{@stroke}; stroke-opacity:0.3; fill:none;</xsl:attribute></xsl:when>
-            <xsl:otherwise><xsl:attribute name="style">fill: none; stroke: black; stroke-opacity:0.3</xsl:attribute></xsl:otherwise>
-          </xsl:choose>
+	  <!-- This is somewhat broken - the gradient is set based on the position/size of the element it is used with; as a result it doesn't line up properly with the main polygon -->
+	  <xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(../svg:polygon/@style,';'),'fill:'))"/>);stroke:black;</xsl:attribute>
         </path>
 </xsl:template>
  

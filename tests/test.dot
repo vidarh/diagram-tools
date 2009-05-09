@@ -7,8 +7,8 @@ digraph test {
   foo [ shape = box ];
   bar [ shape = box, style="filled", fillcolor="lightblue" ];
 
-  baz [ shape = box, style="filled,rounded", fillcolor="white" ];
-  x   [ shape = box, style="filled,rounded" ];
+  baz [ shape = box, style="rounded,filled", fillcolor="white" ];
+  x   [ shape = box, style="filled,rounded", fillcolor="lightgreen" ];
   y   [ shape = polygon ];
   z   [ shape = polygon, style="filled" ];
   a   [ shape = ellipse ];
