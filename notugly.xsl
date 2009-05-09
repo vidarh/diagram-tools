@@ -56,9 +56,11 @@
  
 
 <xsl:template match="svg:text">
-   <text style="font-size:10px; font-family:Verdana">
-     <xsl:apply-templates select="@*|text()" />
-   </text>
+  <text>
+    <xsl:apply-templates select="@*" />
+    <xsl:attribute name="style">font-size:10px; font-family:Verdana</xsl:attribute> 
+    <xsl:apply-templates select="text()"/>
+  </text>
 </xsl:template> 
 
 
