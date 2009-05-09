@@ -2,31 +2,31 @@
 digraph test {
   size = "7,7";
  
-  node [fontsize=20];
+  node [fontsize=10];
 
   foo [ shape = box ];
-  bar [ shape = box, style="filled", fillcolor="lightblue" ];
+  bar [ shape = box, style="filled", fillcolor="mediumblue" ];
 
   baz [ shape = box, style="rounded,filled", fillcolor="white" ];
-  x   [ shape = box, style="filled,rounded", fillcolor="lightgreen" ];
+  x   [ shape = box, style="filled,rounded", fillcolor="crimson" ];
   y   [ shape = polygon ];
-  z   [ shape = polygon, style="filled" ];
+  z   [ shape = polygon, style="filled", fillcolor="aquamarine" ];
   a   [ shape = ellipse ];
-  b   [ shape = ellipse, style="filled" ];
-  c   [ shape = triangle ];
-  d   [ shape = triangle, style="filled" ];
+  b   [ shape = ellipse, style="filled", label="Multi line\nLabel" ];
+  c   [ shape = triangle];
+  d   [ shape = triangle, style="filled", fillcolor="chocolate" ];
 
   e   [ shape = house ];
-  f   [ shape = house, style="filled" ];
+  f   [ shape = house, style="filled", fillcolor="orange" ];
 
   g   [ shape = doublecircle ];
-  h   [ shape = doublecircle, style="filled" ];
+  h   [ shape = doublecircle, style="filled", fillcolor="red" ];
 
   k   [ shape = Mcircle ];
-  l   [ shape = Mcircle, style="filled" ];
+  l   [ shape = Mcircle, style="filled", fillcolor="green" ];
 
   m   [ shape = component ];
-  n   [ shape = component, style="filled" ];
+  n   [ shape = component, style="filled", fillcolor="violet" ];
 
   foo -> bar;
   a -> b -> c;
