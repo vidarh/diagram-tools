@@ -232,26 +232,34 @@
 <xsl:template match="svg:g">
   <xsl:copy>
     <xsl:apply-templates select="@*" />
+
+    <xsl:for-each select="svg:polygon|svg:ellipse">
+      <xsl:call-template name="poly-shadow" />
+    </xsl:for-each>
+
+    <xsl:choose>
+      <xsl:when test="@class='node'">
+	<xsl:for-each select="svg:path">
+	  <xsl:call-template name="path-shadow" />
+	</xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:for-each select="svg:path">
+	  <xsl:call-template name="path-shadow-edge" />
+	</xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
+  
+    <xsl:for-each select="svg:polygon|svg:ellipse|svg:polyline">
+      <xsl:call-template name="poly-main" />
+    </xsl:for-each>
+
+    <xsl:for-each select="svg:path">
+      <xsl:call-template name="path-main" />
+    </xsl:for-each>
+
+    <xsl:apply-templates select="svg:text" />
   </xsl:copy>
-
-  <xsl:for-each select="svg:polygon|svg:ellipse">
-    <xsl:call-template name="poly-shadow" />
-  </xsl:for-each>
-  
-  <xsl:for-each select="svg:path">
-    <xsl:call-template name="path-shadow" />
-  </xsl:for-each>
-  
-  <xsl:for-each select="svg:polygon|svg:ellipse|svg:polyline">
-    <xsl:call-template name="poly-main" />
-  </xsl:for-each>
-
-  <xsl:for-each select="svg:path">
-    <xsl:call-template name="path-main" />
-  </xsl:for-each>
-  
-  <xsl:apply-templates select="svg:text" />
-
 </xsl:template>
 
 <xsl:template name="poly-shadow">
@@ -267,6 +275,14 @@
           <xsl:apply-templates select="@*"/>
 	  <!-- For some reason this comes out twice, so the opacity is set to 0.15 instead of 0.3 -->
           <xsl:attribute name="style">fill: black; stroke: none; fill-opacity:0.15</xsl:attribute> 
+          <xsl:attribute name="transform">translate(3,3)</xsl:attribute>
+        </xsl:element>
+</xsl:template>
+
+<xsl:template name="path-shadow-edge">
+        <xsl:element name="{name()}">
+          <xsl:apply-templates select="@*"/>
+          <xsl:attribute name="style">fill: none; stroke: black; stroke-opacity:0.3</xsl:attribute> 
           <xsl:attribute name="transform">translate(3,3)</xsl:attribute>
         </xsl:element>
 </xsl:template>
