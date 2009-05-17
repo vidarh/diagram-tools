@@ -251,6 +251,7 @@
     </xsl:choose>
   
     <xsl:for-each select="svg:polygon|svg:ellipse|svg:polyline">
+      <xsl:sort select="@ry" order="descending" />
       <xsl:call-template name="poly-main" />
     </xsl:for-each>
 
