@@ -255,9 +255,18 @@
       <xsl:call-template name="poly-main" />
     </xsl:for-each>
 
-    <xsl:for-each select="svg:path">
-      <xsl:call-template name="path-main" />
-    </xsl:for-each>
+    <xsl:choose>
+      <xsl:when test="@class='node'">
+	<xsl:for-each select="svg:path">
+	  <xsl:call-template name="path-main" />
+	</xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:for-each select="svg:path">
+        <path><xsl:apply-templates select="@*" /></path>
+	</xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
 
     <xsl:apply-templates select="svg:text" />
   </xsl:copy>
@@ -306,7 +315,7 @@
 	  <xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(../svg:polygon/@style,';'),'fill:'))"/>);stroke:black;</xsl:attribute>
         </path>
 </xsl:template>
- 
+
 </xsl:stylesheet>
 
  
