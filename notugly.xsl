@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+﻿<?xml version="1.0" ?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" 
     xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg">
 <xsl:output method="xml" indent="yes"
@@ -20,6 +20,10 @@
     <defs>
       <linearGradient id="white" x1="0%" y1="0%" x2="0%" y2="0%">
          <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
+      </linearGradient>
+
+      <linearGradient id="black" x1="0%" y1="0%" x2="0%" y2="0%">
+         <stop offset="0%" style="stop-color:rgb(0,0,0);stop-opacity:1"/>
       </linearGradient>
 
       <linearGradient id="aquamarine" x1="0%" y1="0%" x2="100%" y2="100%">
