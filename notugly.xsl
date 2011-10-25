@@ -1,9 +1,14 @@
-﻿<?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" 
     xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg">
 <xsl:output method="xml" indent="yes"
     doctype-public="-//W3C//DTD SVG 1.0//EN"
     doctype-system="http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"/>
+
+<!-- Used to generate unique gradient fills for colors given by hex value
+     Search for generate-id to find where its used
+-->
+<xsl:key name="fills" match="*" use="@fill"/>
 
 <xsl:template match="@*|node()">
   <xsl:copy>
@@ -205,7 +210,19 @@
          <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
          <stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
       </linearGradient>
+
+    <xsl:for-each select="*//*[generate-id() = generate-id(key('fills',@fill)[1])][substring(@fill,1,1)='#']">
+      <linearGradient x1="0%" y1="0%" x2="100%" y2="100%">
+        <xsl:attribute name="id">fill-<xsl:value-of select="substring(@fill,2,6)"/></xsl:attribute>
+         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
+         <stop offset="100%">
+           <xsl:attribute name="style">stop-color:<xsl:value-of select="@fill" />;stop-opacity:1</xsl:attribute>
+         </stop>
+      </linearGradient>
+    </xsl:for-each>
+
     </defs>
+
 
     <xsl:apply-templates />
   </svg>
@@ -306,7 +323,14 @@
     <xsl:apply-templates select="@*" />
     <xsl:choose>
       <xsl:when test="@fill != ''">
-<xsl:attribute name="style">fill:url(#<xsl:value-of select="@fill"/>);stroke:black;</xsl:attribute></xsl:when>
+        <xsl:choose>
+          <xsl:when test="substring(@fill,1,1) = '#'">
+            <xsl:attribute name="style">fill:url(#fill-<xsl:value-of select="substring(@fill,2,6)"/>);stroke:black;</xsl:attribute></xsl:when>
+          <xsl:otherwise>          
+            <xsl:attribute name="style">fill:url(#<xsl:value-of select="@fill"/>);stroke:black;</xsl:attribute>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
       <xsl:otherwise><xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:<xsl:value-of select="normalize-space(substring-after(substring-after(@style,';'),'stroke:'))"/>;</xsl:attribute></xsl:otherwise>
     </xsl:choose>
   </xsl:element>
