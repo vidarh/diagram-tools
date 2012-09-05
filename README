@@ -4,6 +4,9 @@ relying on Graphviz for output.
 
 Vidar Hokstad <vidar@hokstad.com>
 
+Unless otherwise noted, everything here is under the MIT license - see
+the LICENSE file.
+
  * notugly.xsl: An XSL transform to pretty up the SVG output from Graphviz
      See: http://www.hokstad.com/making-graphviz-output-pretty-with-xsl.html
      And: http://www.hokstad.com/making-graphviz-output-pretty-with-xsl-updated.html
