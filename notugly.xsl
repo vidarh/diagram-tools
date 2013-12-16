@@ -372,9 +372,14 @@
         <xsl:otherwise>
           <xsl:variable name="fill"
                         select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'fill:'))"/>
+          <xsl:variable name="fill-explicit"
+                        select="ancestor::*[svg:polygon]/svg:polygon[1]/@fill"/>
           <xsl:choose>
             <xsl:when test="$fill">
               <path style="fill: url(#{$fill}); stroke: black;" d="{$path-so-far}"/>
+            </xsl:when>
+            <xsl:when test="$fill-explicit">
+              <path style="fill: url(#{$fill-explicit}); stroke: black;" d="{$path-so-far}"/>
             </xsl:when>
             <xsl:otherwise>
               <path style="fill: none; stroke: black;" d="{$path-so-far}"/>
