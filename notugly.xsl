@@ -5,6 +5,8 @@
     doctype-public="-//W3C//DTD SVG 1.0//EN"
     doctype-system="http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"/>
 
+<xsl:variable name="text-style">font-size:10px; font-family:Verdana</xsl:variable>
+
 <!-- Used to generate unique gradient fills for colors given by hex value
      Search for generate-id to find where its used
 -->
@@ -244,7 +246,7 @@
 <xsl:template match="svg:text">
   <text>
     <xsl:apply-templates select="@*" />
-    <xsl:attribute name="style">font-size:10px; font-family:Verdana</xsl:attribute> 
+    <xsl:attribute name="style"><xsl:value-of select="$text-style" /></xsl:attribute> 
     <xsl:apply-templates select="text()"/>
   </text>
 </xsl:template> 
@@ -253,44 +255,253 @@
 <xsl:template match="svg:g">
   <xsl:copy>
     <xsl:apply-templates select="@*" />
-
-    <xsl:for-each select="svg:polygon|svg:ellipse">
-      <xsl:call-template name="poly-shadow" />
-    </xsl:for-each>
-
     <xsl:choose>
-      <xsl:when test="@class='node'">
-        <xsl:for-each select="svg:path">
-          <xsl:call-template name="path-shadow" />
+      <!-- Handle linked groups. -->
+      <xsl:when test="svg:a">
+        <xsl:for-each select="svg:a">
+          <xsl:copy>
+            <xsl:apply-templates select="@*" />
+            <xsl:call-template name="group">
+              <xsl:with-param name="class" select="../@class"/>
+            </xsl:call-template>
+          </xsl:copy>
         </xsl:for-each>
       </xsl:when>
+      <!-- Handle bare groups. -->
       <xsl:otherwise>
-        <xsl:for-each select="svg:path">
-          <xsl:call-template name="path-shadow-edge" />
-        </xsl:for-each>
+        <xsl:call-template name="group"/>
       </xsl:otherwise>
     </xsl:choose>
-  
-    <xsl:for-each select="svg:polygon|svg:ellipse|svg:polyline">
-      <xsl:sort select="@ry" order="descending" />
-      <xsl:call-template name="poly-main" />
-    </xsl:for-each>
-
-    <xsl:choose>
-      <xsl:when test="@class='node'">
-        <xsl:for-each select="svg:path">
-          <xsl:call-template name="path-main" />
-        </xsl:for-each>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:for-each select="svg:path">
-          <path><xsl:apply-templates select="@*" /></path>
-        </xsl:for-each>
-      </xsl:otherwise>
-    </xsl:choose>
-
-    <xsl:apply-templates select="svg:text" />
   </xsl:copy>
+</xsl:template>
+
+
+<xsl:template name="group">
+  <xsl:param name="class" select="@class"/>
+
+  <xsl:for-each select="svg:polygon|svg:ellipse">
+    <xsl:call-template name="poly-shadow" />
+  </xsl:for-each>
+
+  <xsl:choose>
+    <!-- Rewrite node outlines. -->
+    <xsl:when test="$class='node'">
+      <xsl:call-template name="node-outline">
+        <xsl:with-param name="current" select="*[1]"/>
+        <xsl:with-param name="style">shadow</xsl:with-param>
+        <xsl:with-param name="first" select="true()"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:for-each select="svg:path">
+        <xsl:call-template name="path-shadow-edge" />
+      </xsl:for-each>
+    </xsl:otherwise>
+  </xsl:choose>
+
+  <xsl:for-each select="svg:polygon|svg:ellipse">
+    <xsl:sort select="@ry" order="descending" />
+    <xsl:call-template name="poly-main" />
+  </xsl:for-each>
+
+  <xsl:choose>
+    <!-- Rewrite node outlines. -->
+    <xsl:when test="$class='node'">
+      <xsl:call-template name="node-outline">
+        <xsl:with-param name="current" select="*[1]"/>
+        <xsl:with-param name="first" select="true()"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:for-each select="svg:path">
+        <path><xsl:apply-templates select="@*" /></path>
+      </xsl:for-each>
+    </xsl:otherwise>
+  </xsl:choose>
+
+  <xsl:apply-templates select="svg:text" />
+</xsl:template>
+
+<xsl:template name="node-outline">
+  <xsl:param name="path-so-far"/>
+  <xsl:param name="current"/>
+  <xsl:param name="style"/>
+  <xsl:param name="first" select="false()"/>
+
+  <xsl:choose>
+    <!-- Visit each child element, collecting the path details. -->
+    <xsl:when test="$current">
+      <xsl:choose>
+        <xsl:when test="local-name($current) = 'path'">
+          <xsl:call-template name="filter-path">
+            <xsl:with-param name="path-so-far" select="$path-so-far"/>
+            <xsl:with-param name="point" select="substring-before($current/@d, 'C')"/>
+            <xsl:with-param name="points" select="concat('C', substring-after($current/@d, 'C'))"/>
+            <xsl:with-param name="current" select="$current"/>
+            <xsl:with-param name="style" select="$style"/>
+            <xsl:with-param name="include" select="$first"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="local-name($current) = 'polyline'">
+          <xsl:call-template name="polyline-to-path">
+            <xsl:with-param name="path-so-far" select="$path-so-far"/>
+            <xsl:with-param name="point" select="concat('M', substring-before($current/@points, ' '))"/>
+            <xsl:with-param name="points" select="substring-after($current/@points, ' ')"/>
+            <xsl:with-param name="current" select="$current"/>
+            <xsl:with-param name="style" select="$style"/>
+            <xsl:with-param name="include" select="$first"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="node-outline">
+            <xsl:with-param name="path-so-far" select="$path-so-far"/>
+            <xsl:with-param name="current" select="$current/following-sibling::*[1]"/>
+            <xsl:with-param name="style" select="$style"/>
+            <xsl:with-param name="first" select="$first"/>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    <!-- With no more elements to visit, generate the path. -->
+    <xsl:otherwise>
+      <xsl:choose>
+        <xsl:when test="$style = 'shadow'">
+          <path style="fill: black; stroke: none; fill-opacity:0.15" transform="translate(3,3)"
+                d="{$path-so-far}"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="fill"
+                        select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'fill:'))"/>
+          <xsl:choose>
+            <xsl:when test="$fill">
+              <path style="fill: url(#{$fill}); stroke: black;" d="{$path-so-far}"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <path style="fill: none; stroke: black;" d="{$path-so-far}"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template name="filter-path">
+  <xsl:param name="path-so-far"/>
+  <xsl:param name="point"/>
+  <xsl:param name="points"/>
+  <xsl:param name="current"/>
+  <xsl:param name="style"/>
+  <xsl:param name="include" select="true()"/>
+
+  <xsl:variable name="next" select="substring-before($points, ' ')"/>
+  <xsl:variable name="remaining" select="substring-after($points, ' ')"/>
+
+  <xsl:choose>
+    <!-- With path points remaining, include the current point if appropriate
+         and visit those remaining. -->
+    <xsl:when test="$remaining">
+      <xsl:choose>
+        <xsl:when test="$include">
+          <xsl:call-template name="filter-path">
+            <xsl:with-param name="path-so-far" select="concat($path-so-far, ' ', $point)"/>
+            <xsl:with-param name="point" select="$next"/>
+            <xsl:with-param name="points" select="$remaining"/>
+            <xsl:with-param name="current" select="$current"/>
+            <xsl:with-param name="style" select="$style"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="filter-path">
+            <xsl:with-param name="path-so-far" select="$path-so-far"/>
+            <xsl:with-param name="point" select="$next"/>
+            <xsl:with-param name="points" select="$remaining"/>
+            <xsl:with-param name="current" select="$current"/>
+            <xsl:with-param name="style" select="$style"/>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    <!-- With up to one remaining after this point, include the current point,
+         if appropriate, and the one remaining. -->
+    <xsl:otherwise>
+      <xsl:choose>
+        <xsl:when test="$include">
+          <xsl:call-template name="node-outline">
+            <xsl:with-param name="path-so-far" select="concat($path-so-far, ' ', $point, ' ', $points)"/>
+            <xsl:with-param name="current" select="$current/following-sibling::*[1]"/>
+            <xsl:with-param name="style" select="$style"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="node-outline">
+            <xsl:with-param name="path-so-far" select="concat($path-so-far, ' ', $points)"/>
+            <xsl:with-param name="current" select="$current/following-sibling::*[1]"/>
+            <xsl:with-param name="style" select="$style"/>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template name="polyline-to-path">
+  <xsl:param name="path-so-far"/>
+  <xsl:param name="point"/>
+  <xsl:param name="points"/>
+  <xsl:param name="current"/>
+  <xsl:param name="style"/>
+  <xsl:param name="include" select="true()"/>
+
+  <xsl:variable name="next" select="substring-before($points, ' ')"/>
+  <xsl:variable name="remaining" select="substring-after($points, ' ')"/>
+
+  <xsl:choose>
+    <!-- With path points remaining, include the current point if appropriate
+         and visit those remaining. -->
+    <xsl:when test="$remaining">
+      <xsl:choose>
+        <xsl:when test="$include">
+          <xsl:call-template name="polyline-to-path">
+            <xsl:with-param name="path-so-far" select="concat($path-so-far, ' ', $point)"/>
+            <xsl:with-param name="point" select="concat('L', $next)"/>
+            <xsl:with-param name="points" select="$remaining"/>
+            <xsl:with-param name="current" select="$current"/>
+            <xsl:with-param name="style" select="$style"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="polyline-to-path">
+            <xsl:with-param name="path-so-far" select="$path-so-far"/>
+            <xsl:with-param name="point" select="concat('L', $next)"/>
+            <xsl:with-param name="points" select="$remaining"/>
+            <xsl:with-param name="current" select="$current"/>
+            <xsl:with-param name="style" select="$style"/>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    <!-- With up to one remaining after this point, include the current point,
+         if appropriate, and the one remaining. -->
+    <xsl:otherwise>
+      <xsl:choose>
+        <xsl:when test="$include">
+          <xsl:call-template name="node-outline">
+            <xsl:with-param name="path-so-far" select="concat($path-so-far, ' ', $point, ' L', $points)"/>
+            <xsl:with-param name="current" select="$current/following-sibling::*[1]"/>
+            <xsl:with-param name="style" select="$style"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="node-outline">
+            <xsl:with-param name="path-so-far" select="concat($path-so-far, ' L', $points)"/>
+            <xsl:with-param name="current" select="$current/following-sibling::*[1]"/>
+            <xsl:with-param name="style" select="$style"/>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template name="poly-shadow">
@@ -331,7 +542,9 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
-      <xsl:otherwise><xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:<xsl:value-of select="normalize-space(substring-after(substring-after(@style,';'),'stroke:'))"/>;</xsl:attribute></xsl:otherwise>
+      <xsl:otherwise>
+        <xsl:attribute name="style">fill:url(#<xsl:value-of select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>);stroke:<xsl:value-of select="normalize-space(substring-after(substring-after(@style,';'),'stroke:'))"/>;</xsl:attribute>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:element>
 </xsl:template>
