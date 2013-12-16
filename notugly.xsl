@@ -5,7 +5,7 @@
     doctype-public="-//W3C//DTD SVG 1.0//EN"
     doctype-system="http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"/>
 
-<xsl:variable name="text-style">font-size:10px; font-family:Verdana</xsl:variable>
+<xsl:variable name="text-style">font-size:10px; font-family:sans-serif;</xsl:variable>
 
 <!-- Used to generate unique gradient fills for colors given by hex value
      Search for generate-id to find where its used
@@ -373,7 +373,15 @@
           <!-- Provide the path attributes using dynamic colour discoveries. -->
           <xsl:element name="path">
             <xsl:attribute name="d"><xsl:value-of select="$path-so-far"/></xsl:attribute>
-            <xsl:call-template name="style-attribute"/>
+            <xsl:call-template name="make-style-attribute">
+              <xsl:with-param name="fill"
+                              select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'fill:'))"/>
+              <xsl:with-param name="fill-explicit"
+                              select="ancestor::*[svg:polygon]/svg:polygon[1]/@fill"/>
+              <xsl:with-param name="stroke"
+                              select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'stroke:'))"/>
+              <xsl:with-param name="stroke-explicit">black</xsl:with-param>
+            </xsl:call-template>
           </xsl:element>
         </xsl:otherwise>
       </xsl:choose>
@@ -527,21 +535,16 @@
 <xsl:template name="poly-main">
   <xsl:element name="{name()}">
     <xsl:apply-templates select="@*" />
-    <xsl:choose>
-      <xsl:when test="@fill != ''">
-        <xsl:choose>
-          <xsl:when test="substring(@fill,1,1) = '#'">
-            <xsl:attribute name="style">fill:url(#fill-<xsl:value-of select="substring(@fill,2,6)"/>);</xsl:attribute></xsl:when>
-          <xsl:otherwise>          
-            <xsl:attribute name="style">fill:url(#<xsl:value-of select="@fill"/>);</xsl:attribute>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="fill" select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>
-        <xsl:attribute name="style">fill:url(#<xsl:value-of select="$fill"/>);</xsl:attribute>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:call-template name="make-style-attribute">
+      <xsl:with-param name="fill"
+                      select="normalize-space(substring-after(substring-before(@style,';'),'fill:'))"/>
+      <xsl:with-param name="fill-explicit"
+                      select="@fill"/>
+      <xsl:with-param name="stroke"
+                      select="normalize-space(substring-after(substring-after(@style,';'),'stroke:'))"/>
+      <xsl:with-param name="stroke-explicit"
+                      select="@stroke"/>
+    </xsl:call-template>
   </xsl:element>
 </xsl:template>
 
@@ -549,22 +552,31 @@
   <path>
     <xsl:apply-templates select="@*" />
     <!-- This is somewhat broken - the gradient is set based on the position/size of the element it is used with; as a result it doesn't line up properly with the main polygon -->
-    <xsl:call-template name="style-attribute"/>
+    <xsl:call-template name="make-style-attribute">
+      <xsl:with-param name="fill"
+                      select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'fill:'))"/>
+      <xsl:with-param name="fill-explicit"
+                      select="ancestor::*[svg:polygon]/svg:polygon[1]/@fill"/>
+      <xsl:with-param name="stroke"
+                      select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'stroke:'))"/>
+      <xsl:with-param name="stroke-explicit">black</xsl:with-param>
+    </xsl:call-template>
   </path>
 </xsl:template>
 
-<xsl:template name="style-attribute">
-  <xsl:variable name="fill"
-                select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'fill:'))"/>
-  <xsl:variable name="fill-explicit"
-                select="ancestor::*[svg:polygon]/svg:polygon[1]/@fill"/>
-  <xsl:variable name="stroke"
-                select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'stroke:'))"/>
-  <xsl:variable name="stroke-explicit"
-                select="ancestor::*[svg:polygon]/svg:polygon[1]/@stroke"/>
+<xsl:template name="make-style-attribute">
+  <xsl:param name="fill"/>
+  <xsl:param name="fill-explicit"/>
+  <xsl:param name="stroke"/>
+  <xsl:param name="stroke-explicit"/>
+
   <xsl:attribute name="style">
     <xsl:choose>
-      <xsl:when test="$fill">fill: url(#<xsl:value-of select="$fill"/>);</xsl:when>
+      <xsl:when test="$fill">
+        <xsl:call-template name="make-style-fill">
+          <xsl:with-param name="fill" select="$fill"/>
+        </xsl:call-template>
+      </xsl:when>
       <xsl:when test="$fill-explicit">fill: url(#<xsl:value-of select="$fill-explicit"/>);</xsl:when>
       <xsl:otherwise>fill: none;</xsl:otherwise>
     </xsl:choose>
@@ -574,6 +586,13 @@
       <xsl:otherwise>stroke: black;</xsl:otherwise>
     </xsl:choose>
   </xsl:attribute>
+</xsl:template>
+
+<xsl:template name="make-style-fill">
+  <xsl:choose>
+    <xsl:when test="substring($fill,1,1) = '#'">fill: url(#fill-<xsl:value-of select="substring($fill,2,6)"/>);</xsl:when>
+    <xsl:otherwise>fill: url(#<xsl:value-of select="$fill"/>);</xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
