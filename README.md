@@ -20,7 +20,7 @@ testing, lots of gradients); Paul Boddie (refactoring, bug fixes)
 
 Example output:
 
-![Test output](https://raw.githubusercontent.com/vidarh/diagram-tools/master/tests/test-notugly-expected.svg)
+<img src="https://raw.githubusercontent.com/vidarh/diagram-tools/master/tests/test-notugly-expected.svg" />
 
 ## arytodot.rb ##
 
