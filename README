@@ -12,7 +12,7 @@ the LICENSE file.
      And: http://www.hokstad.com/making-graphviz-output-pretty-with-xsl-updated.html
      By Vidar Hokstad and Ryan Shea; Contributions by Jonas Tingborn,
        Earl Cummings, Michael Kennedy (Graphviz 2.20.2 compatibility, bug fixes,
-       testing, lots of gradients)
+       testing, lots of gradients); Paul Boddie (refactoring, bug fixes)
 
  * arytodot.rb: A script to visualize Ruby arrays using Graphviz
      See: http://www.hokstad.com/creating-graphviz-graphs-from-ruby-arrays.html
