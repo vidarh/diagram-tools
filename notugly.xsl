@@ -306,11 +306,13 @@
 
   <xsl:choose>
     <!-- Rewrite node outlines. -->
-    <xsl:when test="$class='node' and svg:path|svg:polyline">
+    <xsl:when test="$class='node'">
+      <xsl:for-each select="svg:path|svg:polyline">
       <xsl:call-template name="node-outline">
-        <xsl:with-param name="current" select="*[1]"/>
+        <xsl:with-param name="current" select="."/>
         <xsl:with-param name="first" select="true()"/>
       </xsl:call-template>
+      </xsl:for-each>
     </xsl:when>
     <xsl:otherwise>
       <xsl:for-each select="svg:path">
@@ -377,7 +379,7 @@
               <xsl:with-param name="fill"
                               select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'fill:'))"/>
               <xsl:with-param name="fill-explicit"
-                              select="ancestor::*[svg:polygon]/svg:polygon[1]/@fill"/>
+                              select="@fill"/>
               <xsl:with-param name="stroke"
                               select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'stroke:'))"/>
               <xsl:with-param name="stroke-explicit">black</xsl:with-param>
@@ -491,7 +493,7 @@
         <xsl:when test="$include">
           <xsl:call-template name="node-outline">
             <xsl:with-param name="path-so-far" select="concat($path-so-far, ' ', $point, ' L', $points)"/>
-            <xsl:with-param name="current" select="$current/following-sibling::*[1]"/>
+            <xsl:with-param name="current" select="$current/following-sibling::*[2]"/>
             <xsl:with-param name="style" select="$style"/>
           </xsl:call-template>
         </xsl:when>
