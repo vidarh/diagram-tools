@@ -246,7 +246,9 @@
 <xsl:template match="svg:text">
   <text>
     <xsl:apply-templates select="@*" />
-    <xsl:attribute name="style"><xsl:value-of select="$text-style" /></xsl:attribute> 
+    <xsl:if test="not(@font-family) and not(@font-size)">
+      <xsl:attribute name="style"><xsl:value-of select="$text-style" /></xsl:attribute> 
+    </xsl:if>
     <xsl:apply-templates select="text()"/>
   </text>
 </xsl:template> 
