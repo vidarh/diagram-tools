@@ -306,12 +306,20 @@
 
   <xsl:choose>
     <!-- Rewrite node outlines. -->
-    <xsl:when test="$class='node'">
-      <xsl:for-each select="svg:path|svg:polyline">
-      <xsl:call-template name="node-outline">
-        <xsl:with-param name="current" select="."/>
-        <xsl:with-param name="first" select="true()"/>
-      </xsl:call-template>
+    <xsl:when test="$class='node' and svg:path">
+      <xsl:for-each select="svg:path">
+        <xsl:call-template name="node-outline">
+          <xsl:with-param name="current" select="."/>
+          <xsl:with-param name="first" select="true()"/>
+        </xsl:call-template>
+      </xsl:for-each>
+    </xsl:when>
+    <xsl:when test="$class='node' and svg:polyline">
+      <xsl:for-each select="svg:polyline">
+        <xsl:call-template name="node-outline">
+          <xsl:with-param name="current" select="."/>
+          <xsl:with-param name="first" select="true()"/>
+        </xsl:call-template>
       </xsl:for-each>
     </xsl:when>
     <xsl:otherwise>
@@ -383,6 +391,7 @@
               <xsl:with-param name="stroke"
                               select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'stroke:'))"/>
               <xsl:with-param name="stroke-explicit">black</xsl:with-param>
+              <xsl:with-param name="none-is-transparent" select="true()"/>
             </xsl:call-template>
           </xsl:element>
         </xsl:otherwise>
@@ -562,15 +571,16 @@
   <xsl:param name="fill-explicit"/>
   <xsl:param name="stroke"/>
   <xsl:param name="stroke-explicit"/>
+  <xsl:param name="none-is-transparent" select="false()"/>
 
   <xsl:attribute name="style">
     <xsl:choose>
-      <xsl:when test="$fill">
+      <xsl:when test="$fill and (not($none-is-transparent) or $fill != 'none')">
         <xsl:call-template name="make-style-fill">
           <xsl:with-param name="fill" select="$fill"/>
         </xsl:call-template>
       </xsl:when>
-      <xsl:when test="$fill-explicit">
+      <xsl:when test="$fill-explicit and (not($none-is-transparent) or $fill-explicit != 'none')">
         <xsl:choose>
           <xsl:when test="starts-with($fill-explicit, '#')">
             <xsl:call-template name="make-style-fill">
