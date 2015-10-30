@@ -579,7 +579,16 @@
           <xsl:with-param name="fill" select="$fill"/>
         </xsl:call-template>
       </xsl:when>
-      <xsl:when test="$fill-explicit">fill: url(#<xsl:value-of select="$fill-explicit"/>);</xsl:when>
+      <xsl:when test="$fill-explicit">
+        <xsl:choose>
+          <xsl:when test="starts-with($fill-explicit, '#')">
+            <xsl:call-template name="make-style-fill">
+              <xsl:with-param name="fill" select="$fill-explicit"/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>fill: url(#<xsl:value-of select="$fill-explicit"/>);</xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
       <xsl:otherwise>fill: none;</xsl:otherwise>
     </xsl:choose>
     <xsl:choose>
@@ -591,6 +600,7 @@
 </xsl:template>
 
 <xsl:template name="make-style-fill">
+  <xsl:param name="fill"/>
   <xsl:choose>
     <xsl:when test="substring($fill,1,1) = '#'">fill: url(#fill-<xsl:value-of select="substring($fill,2,6)"/>);</xsl:when>
     <xsl:otherwise>fill: url(#<xsl:value-of select="$fill"/>);</xsl:otherwise>
