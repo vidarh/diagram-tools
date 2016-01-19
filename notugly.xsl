@@ -247,7 +247,7 @@
   <text>
     <xsl:apply-templates select="@*" />
     <xsl:if test="not(@font-family) and not(@font-size)">
-      <xsl:attribute name="style"><xsl:value-of select="$text-style" /></xsl:attribute> 
+      <xsl:attribute name="style"><xsl:value-of select="$text-style" /></xsl:attribute>
     </xsl:if>
     <xsl:apply-templates select="text()"/>
   </text>
