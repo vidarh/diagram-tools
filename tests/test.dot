@@ -28,7 +28,7 @@ digraph test {
   m   [ shape = component ];
   n   [ shape = component, style="filled", fillcolor="violet" ];
 
-  foo -> bar;
+  foo -> bar [ label = "foobar" ];
   a -> b -> c;
   x -> y -> z;
 

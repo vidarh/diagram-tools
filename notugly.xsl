@@ -268,6 +268,8 @@
             </xsl:call-template>
           </xsl:copy>
         </xsl:for-each>
+        <!-- Handle labels. -->
+        <xsl:apply-templates select="svg:text" />
       </xsl:when>
       <!-- Handle bare groups. -->
       <xsl:otherwise>
@@ -331,6 +333,7 @@
     </xsl:otherwise>
   </xsl:choose>
 
+  <!-- Handle labels. -->
   <xsl:apply-templates select="svg:text" />
 </xsl:template>
 
