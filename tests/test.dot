@@ -31,7 +31,7 @@ digraph test {
   n   [ shape = component, style="filled", fillcolor="violet" ];
 
   polylink [ shape = box, href="#", label="Poly Link" ];
-  pathlink [ shape = box, style="rounded,filled", fillcolor="white", href="#", label="Path Link" ];
+  pathlink [ shape = box, style="rounded,filled", fillcolor="white", color="green", href="#", label="Path Link" ];
   cloud [ shape = none, image="cloud.png" ];
 
   foo -> bar [ label = "foobar" ];

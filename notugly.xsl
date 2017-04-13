@@ -395,7 +395,8 @@
                               select="@fill"/>
               <xsl:with-param name="stroke"
                               select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'stroke:'))"/>
-              <xsl:with-param name="stroke-explicit">black</xsl:with-param>
+              <xsl:with-param name="stroke-explicit"
+                              select="@stroke"/>
               <xsl:with-param name="none-is-transparent" select="true()"/>
             </xsl:call-template>
           </xsl:element>
