@@ -238,7 +238,7 @@
     <xsl:for-each select="svg:polygon">
       <xsl:copy><xsl:apply-templates select="@*" /></xsl:copy>
     </xsl:for-each>
-    <xsl:apply-templates select="svg:title|svg:g" />
+    <xsl:apply-templates select="*[not(self::svg:polygon)]" />
   </g>
 </xsl:template> 
  
@@ -264,7 +264,7 @@
           <xsl:copy>
             <xsl:apply-templates select="@*" />
             <xsl:call-template name="group">
-              <xsl:with-param name="class" select="../@class"/>
+              <xsl:with-param name="class" select="ancestor::svg:g[@class][1]/@class"/>
             </xsl:call-template>
           </xsl:copy>
         </xsl:for-each>
@@ -333,8 +333,8 @@
     </xsl:otherwise>
   </xsl:choose>
 
-  <!-- Handle labels. -->
-  <xsl:apply-templates select="svg:text" />
+  <!-- Handle any other nodes not already processed -->
+  <xsl:apply-templates select="*[not(self::svg:polygon|self::svg:ellipse|self::svg:path|self::svg:polyline)]" />
 </xsl:template>
 
 <xsl:template name="node-outline">
@@ -395,7 +395,8 @@
                               select="@fill"/>
               <xsl:with-param name="stroke"
                               select="normalize-space(substring-after(substring-before(ancestor::*[svg:polygon]/svg:polygon[1]/@style,';'),'stroke:'))"/>
-              <xsl:with-param name="stroke-explicit">black</xsl:with-param>
+              <xsl:with-param name="stroke-explicit"
+                              select="@stroke"/>
               <xsl:with-param name="none-is-transparent" select="true()"/>
             </xsl:call-template>
           </xsl:element>

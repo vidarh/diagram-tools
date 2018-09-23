@@ -1,7 +1,9 @@
 
 digraph test {
   size = "7,7";
- 
+
+  graph [ label = "Test Graph Label" ];
+
   node [fontsize=10];
 
   foo [ shape = box ];
@@ -28,9 +30,15 @@ digraph test {
   m   [ shape = component ];
   n   [ shape = component, style="filled", fillcolor="violet" ];
 
+  polylink [ shape = box, href="#", label="Poly Link" ];
+  pathlink [ shape = box, style="rounded,filled", fillcolor="white", color="green", href="#", label="Path Link" ];
+  cloud [ shape = none, image="cloud.png" ];
+
   foo -> bar [ label = "foobar" ];
   a -> b -> c;
   x -> y -> z;
 
   k -> l -> m -> n;
+
+  cloud -> polylink -> pathlink;
 }
