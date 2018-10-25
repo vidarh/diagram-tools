@@ -3,7 +3,7 @@
 
 module ToDot
   def self.escape str
-    str.gsub(/([<>{} |\])/) { "\""+$1 }
+    str.gsub(/([<>{} |\\])/) { "\""+$1 }
   end
 end
 
