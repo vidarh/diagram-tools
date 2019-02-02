@@ -1,11 +1,13 @@
 <?xml version="1.0" ?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" 
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
     xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg">
 <xsl:output method="xml" indent="yes"
     doctype-public="-//W3C//DTD SVG 1.0//EN"
     doctype-system="http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"/>
 
-<xsl:variable name="text-style">font-size:10px; font-family:sans-serif;</xsl:variable>
+<xsl:variable name="text-style">font-size:10px; font-family:gill-sans;</xsl:variable>
+<xsl:variable name="text-font-family">Gill Sans</xsl:variable>
+<!-- <xsl:variable name="text-font-family">futura</xsl:variable> -->
 
 <!-- Used to generate unique gradient fills for colors given by hex value
      Search for generate-id to find where its used
@@ -15,15 +17,15 @@
 <xsl:template match="@*|node()">
   <xsl:copy>
     <xsl:apply-templates select="@*|node()"/>
-  </xsl:copy> 
+  </xsl:copy>
 </xsl:template>
 
 <xsl:template match="svg:svg">
   <svg xmlns="http://www.w3.org/2000/svg">
-    <!-- Order is important here, so the attributes below overrides the 
+    <!-- Order is important here, so the attributes below overrides the
          originals, which are copied "wholesale" -->
     <xsl:apply-templates select="@*" />
- 
+
     <defs>
       <linearGradient id="white" x1="0%" y1="0%" x2="0%" y2="0%">
          <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
@@ -62,7 +64,7 @@
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(95,158,160);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="chocolate" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(210,105,30);stop-opacity:1"/>
@@ -72,7 +74,7 @@
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(100,149,237);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="crimson" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(220,20,60);stop-opacity:1"/>
@@ -97,7 +99,7 @@
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(255,215,0);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="gray" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(192,192,192);stop-opacity:1"/>
@@ -117,7 +119,7 @@
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(192,192,192);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="hotpink" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(255,105,180);stop-opacity:1"/>
@@ -147,7 +149,7 @@
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(211,211,211);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="lightgrey" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(211,211,211);stop-opacity:1"/>
@@ -157,17 +159,17 @@
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(255,0,255);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="maroon" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(176,48,96);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="mediumblue" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(0,0,205);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="mediumpurple" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(147,112,219);stop-opacity:1"/>
@@ -182,7 +184,7 @@
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(255,192,203);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="purple" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(160,32,240);stop-opacity:1"/>
@@ -192,12 +194,12 @@
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="steelblue" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(70,130,180);stop-opacity:1"/>
       </linearGradient>
-      
+
       <linearGradient id="violet" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
         <stop offset="100%" style="stop-color:rgb(238,130,238);stop-opacity:1"/>
@@ -231,7 +233,7 @@
 </xsl:template>
 
 <!-- Match the top most "g" -->
-<xsl:template match="/svg:svg/svg:g"> 
+<xsl:template match="/svg:svg/svg:g">
   <g>
     <xsl:apply-templates select="@*"/>
     <!-- Graphviz uses a polygon as the background. Don't want a gradient there -->
@@ -240,8 +242,8 @@
     </xsl:for-each>
     <xsl:apply-templates select="*[not(self::svg:polygon)]" />
   </g>
-</xsl:template> 
- 
+</xsl:template>
+
 
 <xsl:template match="svg:text">
   <text>
@@ -249,9 +251,12 @@
     <xsl:if test="not(@font-family) and not(@font-size)">
       <xsl:attribute name="style"><xsl:value-of select="$text-style" /></xsl:attribute>
     </xsl:if>
+    <xsl:if test="(@font-family)='Times,serif'">
+      <xsl:attribute name="font-family"><xsl:value-of select="$text-font-family" /></xsl:attribute>
+    </xsl:if>
     <xsl:apply-templates select="text()"/>
   </text>
-</xsl:template> 
+</xsl:template>
 
 
 <xsl:template match="svg:g">
